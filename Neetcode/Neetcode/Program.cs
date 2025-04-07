@@ -1,34 +1,40 @@
 ﻿
-var s = "racecar"; var t = "carrace";
+var nums = new int[] { 3,0,1,0 };
+var k = 1;
 
-Console.WriteLine(IsAnagram(s,t));
-bool IsAnagram(string s, string t)
+TopKFrequent(nums, k);
+int[] TopKFrequent(int[] nums, int k)
 {
-    var dictionary = new Dictionary<char, int>();
-    foreach(var character in s)
-    {
-        if (dictionary.TryAdd(character, 1))
-        {
+    var numbersWithFreq = nums.GroupBy(x => x).ToDictionary(g => g.Key, g =>g.Count());
 
-        }
-        else
+    var priorQueue = new PriorityQueue<int, int>();
+    foreach(var kvp in numbersWithFreq)
+    {
+        if(priorQueue.Count < k)
         {
-            dictionary[character] = dictionary[character] + 1;
+            priorQueue.Enqueue(kvp.Key, kvp.Value);
+        }
+
+
+        else 
+        {
+            if(priorQueue.TryPeek(out var el, out var prior))
+            {
+                if(kvp.Value > prior)
+                {
+                    priorQueue.Dequeue();
+
+                    priorQueue.Enqueue(kvp.Key, kvp.Value);
+                }
+            }
         }
     }
 
-    for (int i =0; i< t.Length; i ++)
+    var result = new int[priorQueue.Count];
+    var len = priorQueue.Count;
+    for (var item = 0; item < len; item ++)
     {
-        var slovo = t[i];
-        var oldLen = t.Length;
-        t = new string(t.Where(x => x != slovo).ToArray());
-        var newLen = t.Length;
-
-        if (dictionary[slovo] != oldLen - newLen)
-        {
-            return false;
-        }
+        result[item] = priorQueue.Dequeue();
     }
-    return true;
-
+    return result;
 }

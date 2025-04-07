@@ -88,5 +88,80 @@ namespace Neetcode.Arrays___Hashing
             return null;
         }
 
+        public List<List<string>> GroupAnagrams(string[] strs)
+        {
+            var dict = new Dictionary<string, List<string>>();
+            var result = new List<List<string>>();
+
+            if (strs.Length == 1)
+            {
+                result.Add(strs.ToList());
+
+                return result;
+            }
+
+            foreach (var str in strs)
+            {
+                var key = "";
+                for (var letter = 'a'; letter <= 'z'; letter++)
+                {
+                    var number = str.Where(x => x == letter).Count();
+                    key += letter + number.ToString();
+                }
+
+                if (dict.TryGetValue(key, out var list))
+                {
+                    list.Add(str);
+                }
+                else
+                {
+                    var list2 = new List<string>();
+                    list2.Add(str);
+                    dict[key] = list2;
+                }
+            }
+
+            foreach (var k in dict)
+            {
+                result.Add(k.Value);
+            }
+            return result;
+        }
+
+        public int[] TopKFrequent(int[] nums, int k)
+        {
+            var numbersWithFreq = nums.GroupBy(x => x).ToDictionary(g => g.Key, g => g.Count());
+
+            var priorQueue = new PriorityQueue<int, int>();
+            foreach (var kvp in numbersWithFreq)
+            {
+                if (priorQueue.Count < k)
+                {
+                    priorQueue.Enqueue(kvp.Key, kvp.Value);
+                }
+
+
+                else
+                {
+                    if (priorQueue.TryPeek(out var el, out var prior))
+                    {
+                        if (kvp.Value > prior)
+                        {
+                            priorQueue.Dequeue();
+
+                            priorQueue.Enqueue(kvp.Key, kvp.Value);
+                        }
+                    }
+                }
+            }
+
+            var result = new int[priorQueue.Count];
+            var len = priorQueue.Count;
+            for (var item = 0; item < len; item++)
+            {
+                result[item] = priorQueue.Dequeue();
+            }
+            return result;
+        }
     }
 }
