@@ -163,5 +163,36 @@ namespace Neetcode.Arrays___Hashing
             }
             return result;
         }
+    
+        public string Encode(IList<string> strs)
+        {
+            var encodedValue = "";
+            foreach (var str in strs)
+            {
+                encodedValue = encodedValue + str + "`";
+            }
+
+            return encodedValue;
+        }
+
+        public List<string> Decode(string s)
+        {
+            var oneString = "";
+            var response = new List<string>();
+            foreach (var character in s)
+            {
+                if (character == '`')
+                {
+                    response.Add(oneString);
+                    oneString = "";
+                }
+                else
+                {
+                    oneString += character.ToString();
+                }
+            }
+
+            return response;
+        }
     }
 }

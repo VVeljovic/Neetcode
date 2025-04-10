@@ -1,40 +1,39 @@
 ﻿
-var nums = new int[] { 3,0,1,0 };
-var k = 1;
-
-TopKFrequent(nums, k);
-int[] TopKFrequent(int[] nums, int k)
+var lista = new List<string>();
+lista.Add("neet");
+lista.Add("code");
+lista.Add("love");
+lista.Add("you");
+var str = Encode(lista);
+var lista2 = Decode(str);
+var lista3 = new List<string>();
+string Encode(IList<string> strs)
 {
-    var numbersWithFreq = nums.GroupBy(x => x).ToDictionary(g => g.Key, g =>g.Count());
-
-    var priorQueue = new PriorityQueue<int, int>();
-    foreach(var kvp in numbersWithFreq)
+    var encodedValue = "";
+    foreach( var str in strs )
     {
-        if(priorQueue.Count < k)
+        encodedValue = encodedValue + str + "`";
+    }
+
+    return encodedValue;
+}
+
+List<string> Decode(string s)
+{
+    var oneString = "";
+    var response = new List<string>();
+    foreach(var character in s)
+    {
+        if(character == '`')
         {
-            priorQueue.Enqueue(kvp.Key, kvp.Value);
+            response.Add(oneString);
+            oneString = "";
         }
-
-
-        else 
+        else
         {
-            if(priorQueue.TryPeek(out var el, out var prior))
-            {
-                if(kvp.Value > prior)
-                {
-                    priorQueue.Dequeue();
-
-                    priorQueue.Enqueue(kvp.Key, kvp.Value);
-                }
-            }
+            oneString += character.ToString();
         }
     }
 
-    var result = new int[priorQueue.Count];
-    var len = priorQueue.Count;
-    for (var item = 0; item < len; item ++)
-    {
-        result[item] = priorQueue.Dequeue();
-    }
-    return result;
+    return response;
 }
